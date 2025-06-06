@@ -5,6 +5,7 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+
 int main() {
     // Create a 400x400 canvas
     canvas_t* canvas = canvas_create(400, 400);
@@ -41,4 +42,3 @@ int main() {
     return 0;
 }
 
-// delete this comment
