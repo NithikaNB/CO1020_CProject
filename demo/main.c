@@ -41,5 +41,3 @@ int main() {
     canvas_destroy(canvas);
     return 0;
 }
-
-//delete  this comment2

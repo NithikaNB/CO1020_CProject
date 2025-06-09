@@ -9,8 +9,9 @@ DEMODIR = demo
 TESTDIR = tests
 
 # Source files
-DEMO_SRC = $(SRCDIR)/canvas.c $(DEMODIR)/main.c
-MATH_SRC = $(SRCDIR)/math3d.c $(TESTDIR)/test_math.c
+COMMON_SRC = $(SRCDIR)/canvas.c
+DEMO_SRC = $(COMMON_SRC) $(DEMODIR)/main.c
+MATH_SRC = $(COMMON_SRC) $(SRCDIR)/math3d.c $(TESTDIR)/test_math.c
 
 # Targets
 DEMO_TARGET = demo.exe
