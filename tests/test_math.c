@@ -1,6 +1,11 @@
 // test_math.c
 
+
+#define M_PI 3.14159265358979323846
+#define RESOLUTION 1920
+
 #include <stdio.h>
+#include <math.h>
 #include "math3d.h"
 #include "canvas.h"
 
@@ -63,7 +68,8 @@ void draw_projected_cube(const char* filename, mat4_t full_transform, vec3_t cub
 }
 
 int main() {
-    const int width = 256, height = 256;
+    const int width = RESOLUTION, height = RESOLUTION;
+    const int total_frames = 120;
 
     // Cube vertices
     vec3_t cube_verts[8] = {
@@ -87,23 +93,24 @@ int main() {
     // Projection matrix
     mat4_t proj = mat4_frustum(-1, 1, -1, 1, 1, 10);
 
-    // Individual transforms
-    mat4_t scale     = mat4_scale(1.5f, 1.0f, 0.5f);
-    mat4_t rotate    = mat4_rotate_xyz(0.7f, 1.0f, 0.0f);
+    // Constant transforms
+    mat4_t scale     = mat4_scale(1.2f, 1.2f, 1.2f);
     mat4_t translate = mat4_translate(0.0f, 0.0f, -5.0f);
 
-    // Compose: P * (S), P * (R), P * (T)
-    draw_projected_cube("projected_scale.pgm", mat4_multiply(proj, scale), cube_verts, edges, width, height);
-    draw_projected_cube("projected_rotate.pgm", mat4_multiply(proj, rotate), cube_verts, edges, width, height);
-    draw_projected_cube("projected_translate.pgm", mat4_multiply(proj, translate), cube_verts, edges, width, height);
+    // Generate animated frames
+    char filename[64];
+    for (int i = 0; i < total_frames; i++) {
+        float t = (float)i / total_frames;
+        float angle = 2.0f * M_PI * t;
 
-    // Model = T * R * S
-    mat4_t model = mat4_multiply(translate, mat4_multiply(rotate, scale));
+        // Smooth rotation animation
+        mat4_t rotate = mat4_rotate_xyz(angle, angle * 0.5f, 0.0f);
+        mat4_t model = mat4_multiply(translate, mat4_multiply(rotate, scale));
+        mat4_t mvp = mat4_multiply(proj, model);
 
-    draw_projected_cube("projected_model.pgm", mat4_multiply(proj, model), cube_verts, edges, width, height);
-
-    // MVP final
-    draw_projected_cube("projected_mvp.pgm", mat4_multiply(proj, model), cube_verts, edges, width, height);
+        snprintf(filename, sizeof(filename), "build/frame%03d.pgm", i);
+        draw_projected_cube(filename, mvp, cube_verts, edges, width, height);
+    }
 
     return 0;
 }
