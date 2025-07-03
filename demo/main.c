@@ -9,121 +9,128 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #define RESOLUTION 800  // Reduced for debugging
-#define FRAME_COUNT 120
+#define FRAME_COUNT 300
 #define FPS 60
 #endif
 
-// Generate proper soccer ball (truncated icosahedron) with debugging
-// Generate proper soccer ball (truncated icosahedron) with debugging
+
 void generate_soccer_ball(vec3_t** out_verts, int* out_vert_count, int (**out_edges)[2], int* out_edge_count) {
-    // Golden ratio for icosahedron construction
-    const float phi = (1.0f + sqrtf(5.0f)) / 2.0f;
-    const float a = 1.0f;
-    const float b = 1.0f / phi;
+    // Using pre-calculated vertices and edges
+    const int VERT_COUNT = 60;
+    const int EDGE_COUNT = 174;
     
-    printf("Generating soccer ball with golden ratio phi = %.4f\n", phi);
+    // Allocate memory
+    *out_verts = malloc(VERT_COUNT * sizeof(vec3_t));
+    *out_edges = malloc(EDGE_COUNT * sizeof(int[2]));
+    *out_vert_count = VERT_COUNT;
+    *out_edge_count = EDGE_COUNT;
+    
+    vec3_t* verts = *out_verts;
+    int (*edges)[2] = *out_edges;
+    
+    // Pre-calculated vertices
+    float vertices[60][3] = {
+        {-2.389493, -0.500000, -0.425325},
+        {-2.389493, 0.500000, -0.425325},
+        {-2.227033, -1.000000, 0.425325},
+        {-2.227033, 1.000000, 0.425325},
+        {-2.064573, -0.500000, 1.275976},
+        {-2.064573, 0.500000, 1.275976},
+        {-1.964167, -0.809017, -1.275976},
+        {-1.964167, 0.809017, -1.275976},
+        {-1.701302, 0.000000, -1.801707},
+        {-1.639247, -1.809017, 0.425325},
+        {-1.639247, 1.809017, 0.425325},
+        {-1.376382, -1.618034, -1.275976},
+        {-1.376382, -1.000000, 1.801707},
+        {-1.376382, 1.000000, 1.801707},
+        {-1.376382, 1.618034, -1.275976},
+        {-1.213922, -2.118034, -0.425325},
+        {-1.213922, 2.118034, -0.425325},
+        {-1.113516, -1.809017, 1.275976},
+        {-1.113516, 1.809017, 1.275976},
+        {-0.850651, 0.000000, -2.327438},
+        {-0.688191, -0.500000, 2.327438},
+        {-0.688191, 0.500000, 2.327438},
+        {-0.525731, -1.618034, -1.801707},
+        {-0.525731, 1.618034, -1.801707},
+        {-0.262866, -2.427051, -0.425325},
+        {-0.262866, -0.809017, -2.327438},
+        {-0.262866, 0.809017, -2.327438},
+        {-0.262866, 2.427051, -0.425325},
+        {-0.162460, -2.118034, 1.275976},
+        {-0.162460, 2.118034, 1.275976},
+        {0.162460, -2.118034, -1.275976},
+        {0.162460, 2.118034, -1.275976},
+        {0.262866, -2.427051, 0.425325},
+        {0.262866, -0.809017, 2.327438},
+        {0.262866, 0.809017, 2.327438},
+        {0.262866, 2.427051, 0.425325},
+        {0.525731, -1.618034, 1.801707},
+        {0.525731, 1.618034, 1.801707},
+        {0.688191, -0.500000, -2.327438},
+        {0.688191, 0.500000, -2.327438},
+        {0.850651, 0.000000, 2.327438},
+        {1.113516, -1.809017, -1.275976},
+        {1.113516, 1.809017, -1.275976},
+        {1.213922, -2.118034, 0.425325},
+        {1.213922, 2.118034, 0.425325},
+        {1.376382, -1.618034, 1.275976},
+        {1.376382, -1.000000, -1.801707},
+        {1.376382, 1.000000, -1.801707},
+        {1.376382, 1.618034, 1.275976},
+        {1.639247, -1.809017, -0.425325},
+        {1.639247, 1.809017, -0.425325},
+        {1.701302, 0.000000, 1.801707},
+        {1.964167, -0.809017, 1.275976},
+        {1.964167, 0.809017, 1.275976},
+        {2.064573, -0.500000, -1.275976},
+        {2.064573, 0.500000, -1.275976},
+        {2.227033, -1.000000, -0.425325},
+        {2.227033, 1.000000, -0.425325},
+        {2.389493, -0.500000, 0.425325},
+        {2.389493, 0.500000, 0.425325},
+    };
 
-    // Icosahedron vertices (12 vertices)
-    vec3_t base_verts[] = {
-        // Rectangle in XY plane
-        { a,  b,  0}, {-a,  b,  0}, { a, -b,  0}, {-a, -b,  0},
-        // Rectangle in YZ plane  
-        { b,  0,  a}, { b,  0, -a}, {-b,  0,  a}, {-b,  0, -a},
-        // Rectangle in XZ plane
-        { 0,  a,  b}, { 0, -a,  b}, { 0,  a, -b}, { 0, -a, -b}
+    // Pre-calculated edges
+    int edge_list[174][2] = {
+        {0, 1}, {0, 2}, {0, 4}, {0, 5}, {0, 6}, {0, 8}, {0, 9}, {0, 11}, {0, 15},
+        {1, 3}, {1, 5}, {1, 7}, {1, 8}, {1, 10}, {1, 14}, {1, 16},
+        {2, 4}, {2, 9}, {3, 5}, {3, 10}, {4, 5}, {4, 9}, {4, 12}, {4, 17}, {4, 20}, {4, 21},
+        {5, 10}, {5, 13}, {5, 18}, {5, 21}, {6, 8}, {6, 11}, {7, 8}, {7, 14},
+        {8, 11}, {8, 14}, {8, 19}, {8, 22}, {8, 23}, {8, 26}, {9, 15}, {9, 17},
+        {10, 16}, {10, 18}, {11, 15}, {11, 22}, {12, 17}, {12, 20}, {13, 18}, {13, 21},
+        {14, 16}, {14, 23}, {15, 17}, {15, 22}, {15, 24}, {16, 18}, {16, 23}, {16, 27},
+        {17, 20}, {17, 24}, {17, 28}, {17, 32}, {17, 33}, {17, 36}, {18, 21}, {18, 27},
+        {18, 29}, {18, 34}, {18, 35}, {19, 22}, {19, 25}, {19, 26}, {19, 39}, {20, 21},
+        {20, 33}, {21, 33}, {21, 34}, {22, 24}, {22, 25}, {22, 30}, {22, 38}, {22, 41},
+        {23, 26}, {23, 27}, {23, 31}, {23, 42}, {24, 30}, {24, 32}, {24, 41}, {24, 49},
+        {25, 38}, {25, 39}, {26, 39}, {26, 42}, {27, 31}, {27, 35}, {27, 42}, {27, 50},
+        {28, 32}, {28, 36}, {28, 45}, {29, 34}, {29, 35}, {29, 37}, {29, 44}, {29, 48},
+        {30, 41}, {31, 42}, {32, 43}, {32, 45}, {32, 49}, {33, 34}, {33, 36}, {33, 40},
+        {33, 45}, {33, 51}, {34, 37}, {34, 40}, {34, 48}, {34, 51}, {35, 44}, {35, 50},
+        {36, 45}, {37, 48}, {38, 39}, {38, 41}, {38, 46}, {38, 47}, {39, 42}, {39, 47},
+        {40, 51}, {41, 46}, {41, 49}, {41, 56}, {42, 47}, {42, 50}, {42, 57}, {43, 45},
+        {43, 49}, {43, 56}, {44, 48}, {44, 50}, {44, 57}, {45, 51}, {45, 52}, {45, 56},
+        {45, 58}, {46, 47}, {46, 54}, {46, 55}, {46, 56}, {47, 55}, {47, 57}, {48, 51},
+        {48, 53}, {48, 57}, {48, 59}, {49, 56}, {50, 57}, {51, 52}, {51, 53}, {51, 58},
+        {51, 59}, {52, 58}, {53, 59}, {54, 55}, {54, 56}, {55, 56}, {55, 57}, {56, 57},
+        {56, 58}, {57, 58}, {57, 59}, {58, 59}
     };
     
-    // Add more vertices by subdividing edges and faces for soccer ball complexity
-    // For simplicity, we'll use the 12 base vertices plus some additional ones
-    vec3_t extended_verts[] = {
-        // Original 12 icosahedron vertices
-        { a,  b,  0}, {-a,  b,  0}, { a, -b,  0}, {-a, -b,  0},
-        { b,  0,  a}, { b,  0, -a}, {-b,  0,  a}, {-b,  0, -a},
-        { 0,  a,  b}, { 0, -a,  b}, { 0,  a, -b}, { 0, -a, -b},
-        
-        // Additional vertices for more soccer ball-like appearance
-        { 0.8f,  0.8f,  0.8f}, {-0.8f,  0.8f,  0.8f}, { 0.8f, -0.8f,  0.8f}, {-0.8f, -0.8f,  0.8f},
-        { 0.8f,  0.8f, -0.8f}, {-0.8f,  0.8f, -0.8f}, { 0.8f, -0.8f, -0.8f}, {-0.8f, -0.8f, -0.8f},
-        
-        // Mid-edge vertices
-        { 0.6f,  0.0f,  0.9f}, { 0.0f,  0.6f,  0.9f}, {-0.6f,  0.0f,  0.9f}, { 0.0f, -0.6f,  0.9f},
-        { 0.6f,  0.0f, -0.9f}, { 0.0f,  0.6f, -0.9f}, {-0.6f,  0.0f, -0.9f}, { 0.0f, -0.6f, -0.9f},
-        { 0.9f,  0.6f,  0.0f}, { 0.9f, -0.6f,  0.0f}, {-0.9f,  0.6f,  0.0f}, {-0.9f, -0.6f,  0.0f}
-    };
-
-    int vert_count = sizeof(extended_verts) / sizeof(extended_verts[0]);
-    *out_vert_count = vert_count;
-    
-    printf("Soccer ball will have %d vertices\n", vert_count);
-
-    // Normalize all vertices to unit sphere (proper soccer ball shape)
-    *out_verts = malloc(sizeof(vec3_t) * vert_count);
-    for (int i = 0; i < vert_count; i++) {
-        vec3_t v = extended_verts[i];
-        // Normalize to unit sphere
-        float length = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
-        if (length > 1e-6f) {
-            (*out_verts)[i].x = v.x / length;
-            (*out_verts)[i].y = v.y / length;
-            (*out_verts)[i].z = v.z / length;
-        } else {
-            (*out_verts)[i] = v;
-        }
-    }
-
-    // Generate edges by connecting vertices within a threshold distance
-    float EDGE_THRESHOLD = 1.2f; // Adjusted for better connectivity
-    int edge_capacity = 128;
-    int (*edges)[2] = malloc(sizeof(int[2]) * edge_capacity);
-    int edge_count = 0;
-
-    printf("Connecting vertices with threshold %.2f...\n", EDGE_THRESHOLD);
-
-    for (int i = 0; i < vert_count; ++i) {
-        for (int j = i + 1; j < vert_count; ++j) {
-            vec3_t v1 = (*out_verts)[i];
-            vec3_t v2 = (*out_verts)[j];
-            
-            float dx = v1.x - v2.x;
-            float dy = v1.y - v2.y;
-            float dz = v1.z - v2.z;
-            float dist = sqrtf(dx*dx + dy*dy + dz*dz);
-
-            if (dist < EDGE_THRESHOLD) {
-                if (edge_count >= edge_capacity) {
-                    edge_capacity *= 2;
-                    edges = realloc(edges, sizeof(int[2]) * edge_capacity);
-                    printf("Expanded edge capacity to %d\n", edge_capacity);
-                }
-                edges[edge_count][0] = i;
-                edges[edge_count][1] = j;
-                edge_count++;
-            }
-        }
-    }
-
-    *out_edges = edges;
-    *out_edge_count = edge_count;
-    
-    printf("Generated soccer ball: %d vertices, %d edges\n", vert_count, edge_count);
-    
-    // Print first few vertices for debugging
-    printf("First 12 vertices (normalized):\n");
-    for (int i = 0; i < (vert_count < 12 ? vert_count : 12); i++) {
-        printf("Vertex %d: (%.3f, %.3f, %.3f)\n", i, 
-               (*out_verts)[i].x, (*out_verts)[i].y, (*out_verts)[i].z);
+    // Copy vertices
+    for (int i = 0; i < VERT_COUNT; i++) {
+        verts[i] = vec3_from_cartesian(vertices[i][0], vertices[i][1], vertices[i][2]);
     }
     
-    // Print first few edges for debugging
-    printf("First 12 edges:\n");
-    for (int i = 0; i < (edge_count < 12 ? edge_count : 12); i++) {
-        printf("Edge %d: %d -> %d\n", i, edges[i][0], edges[i][1]);
+    // Copy edges
+    for (int i = 0; i < EDGE_COUNT; i++) {
+        edges[i][0] = edge_list[i][0];
+        edges[i][1] = edge_list[i][1];
     }
     
-    if (edge_count == 0) {
-        printf("WARNING: No edges generated! Check EDGE_THRESHOLD value.\n");
-    }
 }
+
 
 int main() {
     printf("=== Starting 3D Rendering Debug ===\n");
