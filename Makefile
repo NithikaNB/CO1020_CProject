@@ -100,3 +100,6 @@ help:
 	@echo "  help         - Show this help message"
 
 .PHONY: all run-demo run-test demo-only test-only check-frames check-build debug release clean help
+
+test_lighting: tests/test_lighting_animation.c src/lighting.c src/animation.c src/math3d.c
+	$(CC) $(CFLAGS) -Iinclude $^ -o build/test_lighting
