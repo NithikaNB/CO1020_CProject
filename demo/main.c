@@ -12,11 +12,13 @@
 #define FRAME_COUNT 300
 #define FPS 60
 
+#define PHI ((1.0f + sqrtf(5.0f)) * 0.5f)
+#define T   (1.0f / 3.0f)
+
 #endif
 
 
 void generate_soccer_ball(vec3_t** out_verts, int* out_vert_count, int (**out_edges)[2], int* out_edge_count) {
-<<<<<<< HEAD
     // Constants
     #define MAX_EDGES_SB   30
     #define MAX_VERTS_SB   60
@@ -292,6 +294,7 @@ void generate_soccer_ball(vec3_t** out_verts, int* out_vert_count, int (**out_ed
     #undef MAX_FACES_SB
 }
 
+
 int main() {
     printf("=== Starting 3D Rendering Debug ===\n");
     
@@ -376,9 +379,7 @@ int main() {
     printf("MVP matrix computed with quaternion rotation\n");
 
     // Create output folder (run manually in shell too)
-
     system("mkdir frames");
-
 
     for (int frame = 0; frame < FRAME_COUNT; frame++) {
         printf("\n--- Rendering Frame %d/%d ---\n", frame + 1, FRAME_COUNT);
