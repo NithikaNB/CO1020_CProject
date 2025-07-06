@@ -38,4 +38,5 @@ mat4_t mat4_frustum(float left, float right, float bottom, float top, float near
 // Matrix multiplication (4x4)
 mat4_t mat4_multiply(mat4_t a, mat4_t b);
 
+
 #endif // MATH3D_H

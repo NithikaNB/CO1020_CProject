@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdint.h>
+
 
 typedef struct {
     int width;
@@ -19,5 +21,6 @@ void canvas_clear(canvas_t* canvas);
 void set_pixel_f(canvas_t* canvas, float x, float y, float intensity);
 void draw_line_f(canvas_t* canvas, float x0, float y0, float x1, float y1, float thickness);
 void canvas_save_pgm(canvas_t* canvas, const char* filename);
+void draw_circle(canvas_t* canvas, int cx, int cy, int radius, uint8_t intensity);
 
 #endif

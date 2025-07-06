@@ -3,13 +3,18 @@
 
 #include "math3d.h"
 
-// Structure to represent a directional light
+// Light structure
 typedef struct {
-    vec3_t direction;  // Light direction (should be normalized)
-    float intensity;   // Light intensity (range: 0.0 to 1.0)
+    vec3_t position;    // Light position in world space
+    vec3_t color;       // Light color (RGB values 0-1)
+    float intensity;    // Light intensity multiplier
 } light_t;
 
-// Compute Lambert intensity for an edge and light direction
-float compute_lambert_intensity(vec3_t edge_dir, vec3_t light_dir);
+// Create a new light
+light_t light_create(vec3_t position, vec3_t color, float intensity);
 
-#endif
+// Calculate lighting intensity for an edge using Lambert lighting
+float calculate_edge_lighting(vec3_t v0, vec3_t v1, light_t* lights, int light_count);
+
+
+#endif // LIGHTING_H

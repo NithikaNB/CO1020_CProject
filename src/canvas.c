@@ -1,5 +1,6 @@
 // canvas.c
 #include "canvas.h"
+#include <stdint.h> // in case it's not included already
 
 canvas_t* canvas_create(int width, int height) {
     canvas_t* canvas = malloc(sizeof(canvas_t));
@@ -156,4 +157,23 @@ void canvas_save_pgm(canvas_t* canvas, const char* filename) {
     }
     
     fclose(file);
+}
+
+void draw_circle(canvas_t* canvas, int cx, int cy, int radius, uint8_t intensity) {
+    if (!canvas || !canvas->pixels || radius < 0) return; // ⚠️ protect against NULL
+
+    for (int y = -radius; y <= radius; y++) {
+        for (int x = -radius; x <= radius; x++) {
+            if (x * x + y * y <= radius * radius) {
+                int px = cx + x;
+                int py = cy + y;
+
+                // 🔒 Bounds check
+                if (px >= 0 && px < canvas->width && py >= 0 && py < canvas->height) {
+                    size_t index = py * canvas->width + px;
+                    canvas->pixels[index] = intensity;
+                }
+            }
+        }
+    }
 }
