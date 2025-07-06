@@ -355,16 +355,16 @@ void generate_tetrahedron(vec3_t** out_verts, int* out_vert_count, int (**out_ed
 }
 
 void draw_light_sources(canvas_t* canvas, light_t* lights, int light_count, mat4_t mvp) {
-    for (int i = 0; i < light_count; i++) {
-        if (lights[i].intensity <= 0.0f) continue;
-
-        vec3_t screen_pos = project_vertex(lights[i].position, mvp, canvas->width, canvas->height);
-
+    // Only draw the first light (single active light)
+    if (lights[0].intensity > 0.0f) {
+        vec3_t screen_pos = project_vertex(lights[0].position, mvp, canvas->width, canvas->height);
         if (clip_to_circular_viewport(canvas, screen_pos.x, screen_pos.y)) {
-            draw_circle(canvas, (int)screen_pos.x, (int)screen_pos.y, 4, 255);  // 255 = white intensity
+            draw_circle(canvas, (int)screen_pos.x, (int)screen_pos.y, 6, 255); // Yellow filled circle
         }
     }
 }
+
+
 static vec3_t mat4_transform_point(mat4_t m, vec3_t v) {
     float x = v.x, y = v.y, z = v.z;
 
@@ -379,15 +379,13 @@ static vec3_t mat4_transform_point(mat4_t m, vec3_t v) {
 
 // Fixed lighting setup function
 void setup_single_dramatic_light(light_t* lights) {
-    // Strong primary light from front-right-top
-    lights[0] = light_create(vec3_from_cartesian(6.0f, 4.0f, 5.0f), 
-                           vec3_from_cartesian(1.0f, 1.0f, 1.0f), 2.0f);
+    // Single centered light at origin
+    lights[0] = light_create(vec3_from_cartesian(0.0f, 0.0f, 0.0f), 
+                           vec3_from_cartesian(1.0f, 1.0f, 1.0f), 1.0f);
     
-    // Weaker secondary light from opposite side
-    lights[1] = light_create(vec3_from_cartesian(-3.0f, 1.0f, -2.0f), 
-                           vec3_from_cartesian(0.8f, 0.8f, 1.0f), 0.5f);
-    
-    // Disable third light
+    // Disable other lights
+    lights[1] = light_create(vec3_from_cartesian(0.0f, 0.0f, 0.0f), 
+                           vec3_from_cartesian(1.0f, 1.0f, 1.0f), 0.0f);
     lights[2] = light_create(vec3_from_cartesian(0.0f, 0.0f, 0.0f), 
                            vec3_from_cartesian(1.0f, 1.0f, 1.0f), 0.0f);
 }
@@ -425,12 +423,20 @@ void render_wireframe_with_dramatic_lighting(canvas_t* canvas, vec3_t* verts, in
             vec3_t v1 = screen_verts[i1];
             
             // Check if at least one vertex is visible in the circular viewport
-            if (clip_to_circular_viewport(canvas, v0.x, v0.y) || 
-                clip_to_circular_viewport(canvas, v1.x, v1.y)) {
+            // if (clip_to_circular_viewport(canvas, v0.x, v0.y) || 
+            //     clip_to_circular_viewport(canvas, v1.x, v1.y)) {
+                
+            //     // Draw the line with thickness based on lighting
+            //     draw_line_f(canvas, v0.x, v0.y, v1.x, v1.y, thickness);
+            // }
+
+            if (1) {
                 
                 // Draw the line with thickness based on lighting
                 draw_line_f(canvas, v0.x, v0.y, v1.x, v1.y, thickness);
             }
+
+            
         }
     }
     
@@ -508,17 +514,28 @@ int main() {
     );
 
     // Setup projection and view matrices
-    mat4_t projection = mat4_frustum(-2.5f, 2.5f, -2.0f, 2.0f, 3.0f, 20.0f);
+    mat4_t projection = mat4_frustum(-2.5f, 2.5f, -2.0f, 2.0f, 3.0f, 30.0f);
     mat4_t view = mat4_translate(0.0f, 0.0f, -10.0f);
 
     // Transform lights into view space once
+    // light_t lights_in_view[3];
+    // for (int i = 0; i < 3; i++) {
+    //     vec3_t pos = lights[i].position;
+    //     vec3_t pos_in_view = mat4_transform_point(view, pos);
+    //     lights_in_view[i] = lights[i];
+    //     lights_in_view[i].position = pos_in_view;
+    // }
+
     light_t lights_in_view[3];
-    for (int i = 0; i < 3; i++) {
-        vec3_t pos = lights[i].position;
-        vec3_t pos_in_view = mat4_transform_point(view, pos);
-        lights_in_view[i] = lights[i];
-        lights_in_view[i].position = pos_in_view;
-    }
+    vec3_t pos = lights[0].position;
+    vec3_t pos_in_view = mat4_transform_point(view, pos);
+    lights_in_view[0] = lights[0];
+    lights_in_view[0].position = pos_in_view;
+    // Initialize other lights to zero intensity
+    lights_in_view[1] = light_create(vec3_from_cartesian(0.0f, 0.0f, 0.0f), 
+                                vec3_from_cartesian(1.0f, 1.0f, 1.0f), 0.0f);
+    lights_in_view[2] = light_create(vec3_from_cartesian(0.0f, 0.0f, 0.0f), 
+                                vec3_from_cartesian(1.0f, 1.0f, 1.0f), 0.0f);
 
     // Main animation loop
     for (int frame = 0; frame < TOTAL_FRAMES; frame++) {
@@ -585,7 +602,7 @@ int main() {
     }
 
         render_wireframe_with_dramatic_lighting(canvas, soccer_transformed, soccer_vert_count,
-                                              soccer_edges, soccer_edge_count, soccer_mvp, lights_in_view, 2);
+                                              soccer_edges, soccer_edge_count, soccer_mvp, lights_in_view, 1);
         free(soccer_transformed);
 
         // Render cube
@@ -607,7 +624,7 @@ int main() {
             cube_transformed[i] = v;
         }
         render_wireframe_with_dramatic_lighting(canvas, cube_transformed, cube_vert_count,
-                                              cube_edges, cube_edge_count, cube_mvp, lights_in_view, 2);
+                                              cube_edges, cube_edge_count, cube_mvp, lights_in_view, 1);
         free(cube_transformed);
 
         // Render tetrahedron
@@ -645,13 +662,13 @@ int main() {
             tetra_transformed[i] = v;
         }
         render_wireframe_with_dramatic_lighting(canvas, tetra_transformed, tetra_vert_count,
-                                              tetra_edges, tetra_edge_count, tetra_mvp, lights_in_view, 2);
+                                              tetra_edges, tetra_edge_count, tetra_mvp, lights_in_view, 1);
         free(tetra_transformed);
 
         // Save frame
         char filename[256];
         snprintf(filename, sizeof(filename), "frames/frame_%04d.pgm", frame);
-        //draw_light_sources(canvas, lights_in_view, 3, mat4_multiply(projection, view));
+        draw_light_sources(canvas, lights_in_view, 3, mat4_multiply(projection, view));
         canvas_save_pgm(canvas, filename);
 
         // Progress update

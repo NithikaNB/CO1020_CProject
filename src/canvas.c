@@ -159,19 +159,39 @@ void canvas_save_pgm(canvas_t* canvas, const char* filename) {
     fclose(file);
 }
 
-void draw_circle(canvas_t* canvas, int cx, int cy, int radius, uint8_t intensity) {
-    if (!canvas || !canvas->pixels || radius < 0) return; // ⚠️ protect against NULL
+void draw_circle(canvas_t* canvas, int center_x, int center_y, int radius, uint8_t intensity) {
+    // Validate inputs
+    if (!canvas || !canvas->pixels || canvas->width <= 0 || canvas->height <= 0) {
+        fprintf(stderr, "Error: Invalid canvas or pixel buffer\n");
+        return;
+    }
 
-    for (int y = -radius; y <= radius; y++) {
-        for (int x = -radius; x <= radius; x++) {
-            if (x * x + y * y <= radius * radius) {
-                int px = cx + x;
-                int py = cy + y;
+    // Iterate over a bounding box around the circle
+    int x_min = center_x - radius;
+    int x_max = center_x + radius;
+    int y_min = center_y - radius;
+    int y_max = center_y + radius;
 
-                // 🔒 Bounds check
-                if (px >= 0 && px < canvas->width && py >= 0 && py < canvas->height) {
-                    size_t index = py * canvas->width + px;
+    // Clip to canvas boundaries
+    x_min = x_min < 0 ? 0 : x_min;
+    x_max = x_max >= canvas->width ? canvas->width - 1 : x_max;
+    y_min = y_min < 0 ? 0 : y_min;
+    y_max = y_max >= canvas->height ? canvas->height - 1 : y_max;
+
+    // Draw filled circle
+    for (int y = y_min; y <= y_max; y++) {
+        for (int x = x_min; x <= x_max; x++) {
+            // Check if the pixel is within the circle's radius
+            int dx = x - center_x;
+            int dy = y - center_y;
+            if (dx * dx + dy * dy <= radius * radius) {
+                // Ensure index is within bounds
+                size_t index = (size_t)y * canvas->width + x;
+                if (index < (size_t)(canvas->width * canvas->height)) {
                     canvas->pixels[index] = intensity;
+                } else {
+                    fprintf(stderr, "Error: Pixel index out of bounds (%zu, max: %zu)\n",
+                            index, (size_t)(canvas->width * canvas->height));
                 }
             }
         }

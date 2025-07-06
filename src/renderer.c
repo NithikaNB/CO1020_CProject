@@ -22,7 +22,8 @@
  * @return A vec3_t containing the 2D screen coordinates and depth.
  */
 
-/*******  9051adf6-8e65-4859-8653-1b23cd2563bf  *******/vec3_t project_vertex(vec3_t v, mat4_t mvp, int width, int height) {
+
+vec3_t project_vertex(vec3_t v, mat4_t mvp, int width, int height) {
     // Debug: Print input vertex
     printf("Projecting vertex: (%.2f, %.2f, %.2f)\n", v.x, v.y, v.z);
     
@@ -176,7 +177,7 @@ void render_wireframe(canvas_t* canvas, vec3_t* verts, int vert_count, int edges
         }
 
         // Draw the line
-        draw_line_f(canvas, p0.x, p0.y, p1.x, p1.y, 1.5f);
+        draw_line_f(canvas, p0.x, p0.y, p1.x, p1.y, 1.4f);
         drawn_edges++;
         printf("  -> Drawn\n");
     }
