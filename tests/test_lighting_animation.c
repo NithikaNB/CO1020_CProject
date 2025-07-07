@@ -354,15 +354,15 @@ void generate_tetrahedron(vec3_t** out_verts, int* out_vert_count, int (**out_ed
     }
 }
 
-void draw_light_sources(canvas_t* canvas, light_t* lights, int light_count, mat4_t mvp) {
-    // Only draw the first light (single active light)
-    if (lights[0].intensity > 0.0f) {
-        vec3_t screen_pos = project_vertex(lights[0].position, mvp, canvas->width, canvas->height);
-        if (clip_to_circular_viewport(canvas, screen_pos.x, screen_pos.y)) {
-            draw_circle(canvas, (int)screen_pos.x, (int)screen_pos.y, 6, 255); // Yellow filled circle
-        }
-    }
-}
+// void draw_light_sources(canvas_t* canvas, light_t* lights, int light_count, mat4_t mvp) {
+//     // Only draw the first light (single active light)
+//     if (lights[0].intensity > 0.0f) {
+//         vec3_t screen_pos = project_vertex(lights[0].position, mvp, canvas->width, canvas->height);
+//         if (clip_to_circular_viewport(canvas, screen_pos.x, screen_pos.y)) {
+//             draw_circle(canvas, (int)screen_pos.x, (int)screen_pos.y, 6, 255); // Yellow filled circle
+//         }
+//     }
+// }
 
 
 static vec3_t mat4_transform_point(mat4_t m, vec3_t v) {
@@ -668,7 +668,7 @@ int main() {
         // Save frame
         char filename[256];
         snprintf(filename, sizeof(filename), "frames/frame_%04d.pgm", frame);
-        draw_light_sources(canvas, lights_in_view, 3, mat4_multiply(projection, view));
+        //draw_light_sources(canvas, lights_in_view, 3, mat4_multiply(projection, view));
         canvas_save_pgm(canvas, filename);
 
         // Progress update

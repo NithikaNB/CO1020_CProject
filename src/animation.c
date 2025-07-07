@@ -105,6 +105,7 @@ vec3_t path_evaluate(animation_path_t path, float time) {
     return result;
 }
 
+
 // Smooth step function for easing
 float smooth_step(float t) {
     if (t <= 0.0f) return 0.0f;

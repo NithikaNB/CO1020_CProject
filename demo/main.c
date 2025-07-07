@@ -308,26 +308,24 @@ int main() {
 
     canvas_clear(canvas);
 
-    // --- Test 1: Simple line drawing ---
-    printf("\n=== Test 1: Simple line drawing ===\n");
     
     // Draw a simple cross to test basic functionality
     float center_x = canvas->width / 2.0f;
     float center_y = canvas->height / 2.0f;
     
-    draw_line_f(canvas, center_x - 50, center_y, center_x + 50, center_y, 2.0f); // horizontal
-    draw_line_f(canvas, center_x, center_y - 50, center_x, center_y + 50, 2.0f); // vertical
+    //draw_line_f(canvas, center_x - 50, center_y, center_x + 50, center_y, 2.0f); // horizontal
+    //draw_line_f(canvas, center_x, center_y - 50, center_x, center_y + 50, 2.0f); // vertical
     
-    canvas_save_pgm(canvas, "test_cross.pgm");
-    printf("Simple cross saved to test_cross.pgm\n");
+    //canvas_save_pgm(canvas, "test_cross.pgm");
+    //printf("Simple cross saved to test_cross.pgm\n");
 
     // --- Test 2: Clock face (original test) ---
-    printf("\n=== Test 2: Clock face ===\n");
+    printf("\n=== Clock face ===\n");
     
     canvas_clear(canvas);
     
     float radius = 100.0f;
-    for (int angle_deg = 0; angle_deg < 360; angle_deg += 30) {  // Every 30 degrees for clearer debug
+    for (int angle_deg = 0; angle_deg < 360; angle_deg += 15) {  // Every 15 degrees for clearer debug
         float angle_rad = angle_deg * M_PI / 180.0f;
         float end_x = center_x + radius * cosf(angle_rad);
         float end_y = center_y + radius * sinf(angle_rad);
@@ -335,11 +333,11 @@ int main() {
         printf("Drew line to angle %d degrees: (%.1f, %.1f)\n", angle_deg, end_x, end_y);
     }
 
-    canvas_save_pgm(canvas, "debug_clock.pgm");
-    printf("Clock demo saved to debug_clock.pgm\n");
+    canvas_save_pgm(canvas, "Clock.pgm");
+    printf("Clock saved to Clock.pgm\n");
 
     // --- Test 3: 3D Soccer Ball Wireframe ---
-    printf("\n=== Test 3: 3D Soccer Ball Wireframe ===\n");
+    printf("\n=== 3D Soccer Ball Wireframe ===\n");
     
     canvas_clear(canvas);
 
