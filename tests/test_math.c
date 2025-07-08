@@ -108,7 +108,7 @@ int main() {
         mat4_t model = mat4_multiply(translate, mat4_multiply(rotate, scale));
         mat4_t mvp = mat4_multiply(proj, model);
 
-        snprintf(filename, sizeof(filename), "frames/frame%03d.pgm", i);
+        snprintf(filename, sizeof(filename), "frames/frame_%03d.pgm", i);
         draw_projected_cube(filename, mvp, cube_verts, edges, width, height);
     }
 
